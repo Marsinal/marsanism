@@ -1,2 +1,2 @@
 # Marsanism
-Крутой проект
+Project was created
