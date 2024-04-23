@@ -1,7 +1,6 @@
 dis = new Display("display", [100,100], "#1f1f1f");
 displayAtWorkSet(dis);
 Slot = new Slot();
-But = new Button();
 Gui = new Gui();
 
 Gui.size = [200,200]
@@ -37,6 +36,7 @@ function step() {
             con[1]++
         }
         TYPE();
+        clearTimeout(step);
     }, 1000 / fps);
 }
 step();
