@@ -1,3 +1,15 @@
+body = document.querySelector("body")
+body.style.overflow = "hidden"
+body.style.backgroundColor = "#0f0f0f"
+
+disp = document.querySelector("display")
+disp.style.position = "absolute"
+disp.style.margin = "auto"
+disp.style.top = 0
+disp.style.right = 0
+disp.style.bottom = 0
+disp.style.left = 0
+
 dis = new Display("display", [100,100], "#1a1a1a");
 displayAtWorkSet(dis);
 Slot = new Slot();
