@@ -585,7 +585,7 @@ function process() {
             }
         }
     }
-    else if (out[0] == 6 && window.obj.get(guiCom[1])[0] == "computer") {
+    else if (out[0] == 6 && window.obj.get(guiCom[1])[0][0] == "computer") {
         if (out.length == 1) {
             out = RusToDis('данные о движении '+window.obj.get(guiCom[1])[3][3]);
         }
