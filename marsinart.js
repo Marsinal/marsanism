@@ -4,8 +4,6 @@ var x = document.getElementById('X');
 var y = document.getElementById('Y');
 
 var upd = true;
-var updLocal = [[0,0],false]
-var updNeed = new Map();
 
 var mouseTriggers = [null,null];
 var isMouseDown = false;
@@ -107,7 +105,7 @@ function doSprite(elem1, coord, scale) {
     }
 }
 
-function doRedSprite(elem1, coord, scale, power) {
+/*function doRedSprite(elem1, coord, scale, power) {
     i = 2;
     for (let x = 0; x != elem1[0]*scale[0]; x=x+scale[0]) {
         for (let y = 0; y != elem1[1]*scale[1]; y=y+scale[1]) {
@@ -131,7 +129,7 @@ function doGraySprite(elem1, coord, scale) {
             i++;
         }
     }
-}
+}*/
 
 function stab(pow1,pow2) {
     if (pow1 > pow2) {
@@ -405,7 +403,7 @@ class Slot {
                     case 11:
                         if (kickIf(window.TempObj[0][0],"quad")) {
                             updSlot(this.RealCoord)
-                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["quad",true],[1,50],[false,false,false,false],[0,[true,true,true,true],[false,false,false,false],[0,0,[],[]],[0,5]]]);
+                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["quad",true],[1,50],[false,false,false,false],[0,[true,true,true,true],[false,false,false,false],[0,0,[],[]],[0,10]]]);
                         }
                         break
                     case 12:
@@ -456,12 +454,12 @@ class Slot {
                 me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
                 power = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1])[1];
                 n = me[3][2].filter((value) => value).length;
-                doRedSprite(window.copperWire[1], coord, [window.scope,window.scope],power[0]);
+                doSprite(window.copperWire[1], coord, [window.scope,window.scope],power[0]);
                 window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]-1));
                 if (window.TempObj == undefined) { window.TempObj=[0] }
                 else if (window.TempObj[2][2] == false || me[2][0] == false) {}
                 else {
-                    doRedSprite(window.copperWire[2], coord, [window.scope,window.scope], power[0]);
+                    doSprite(window.copperWire[2], coord, [window.scope,window.scope]);
                     me[3][2][0] = true;
                     if (power[1] > power[0] && window.TempObj[1][0] > n && me[3][1][0] == true) {
                         power[0] = power[0] + (n+1)
@@ -471,7 +469,7 @@ class Slot {
                         }
                     }
                     else if (me[3][1][0] == false) {
-                        doRedSprite(window.copperWire[6], coord, [window.scope,window.scope], power[0]);
+                        doSprite(window.copperWire[6], coord, [window.scope,window.scope]);
                     }
                 }
 
@@ -479,7 +477,7 @@ class Slot {
                 if (window.TempObj == undefined) { window.TempObj=[0] }
                 else if (window.TempObj[2][1] == false || me[2][3] == false) {}
                 else {
-                    doRedSprite(window.copperWire[3], coord, [window.scope,window.scope], power[0]);
+                    doSprite(window.copperWire[3], coord, [window.scope,window.scope]);
                     me[3][2][1] = true;
                     if (power[1] > power[0] && window.TempObj[1][0] > n && me[3][1][1] == true) {
                         power[0] = power[0] + (n+1)
@@ -489,7 +487,7 @@ class Slot {
                         }
                     }
                     else if (me[3][1][1] == false) {
-                        doRedSprite(window.copperWire[7], coord, [window.scope,window.scope], power[0]);
+                        doSprite(window.copperWire[7], coord, [window.scope,window.scope]);
                     }
                 }
 
@@ -497,7 +495,7 @@ class Slot {
                 if (window.TempObj == undefined) { window.TempObj=[0] }
                 else if (window.TempObj[2][0] == false || me[2][2] == false) {}
                 else {
-                    doRedSprite(window.copperWire[4], coord, [window.scope,window.scope], power[0]);
+                    doSprite(window.copperWire[4], coord, [window.scope,window.scope]);
                     me[3][2][2] = true;
                     if (power[1] > power[0] && window.TempObj[1][0] > n && me[3][1][2] == true) {
                         power[0] = power[0] + (n+1)
@@ -507,7 +505,7 @@ class Slot {
                         }
                     }
                     else if (me[3][1][2] == false) {
-                        doRedSprite(window.copperWire[8], coord, [window.scope,window.scope], power[0]);
+                        doSprite(window.copperWire[8], coord, [window.scope,window.scope]);
                     }
                 }
 
@@ -515,7 +513,7 @@ class Slot {
                 if (window.TempObj == undefined) { window.TempObj=[0] }
                 else if (window.TempObj[2][3] == false || me[2][1] == false) {}
                 else {
-                    doRedSprite(window.copperWire[5], coord, [window.scope,window.scope], power[0]);
+                    doSprite(window.copperWire[5], coord, [window.scope,window.scope]);
                     me[3][2][3] = true;
                     if (power[1] > power[0] && window.TempObj[1][0] > n && me[3][1][3] == true) {
                         power[0] = power[0] + (n+1)
@@ -525,7 +523,7 @@ class Slot {
                         }
                     }
                     else if (me[3][1][3] == false) {
-                        doRedSprite(window.copperWire[9], coord, [window.scope,window.scope], power[0]);
+                        doSprite(window.copperWire[9], coord, [window.scope,window.scope]);
                     }
                 }
                 power[0] = stab(power[0],power[1])
@@ -602,14 +600,18 @@ class Slot {
                 break
             case "quad":
                 me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
-                if (me[3][3][3] == undefined) {
-                    doSprite(window.quad[0], coord, [window.scope,window.scope]);
-                }
-                else if (me[3][3][3].length == 0) {
-                    doSprite(window.quad[0], coord, [window.scope,window.scope]);
-                }
-                else {
-                    doSprite(window.quad[1], coord, [window.scope,window.scope]);
+                if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                    updSlot(this.RealCoord);
+                    if (me[3][3][3] == undefined) {
+                        doSprite(window.quad[0], coord, [window.scope,window.scope]);
+                    }
+                    else if (me[3][3][3].length == 0) {
+                        doSprite(window.quad[0], coord, [window.scope,window.scope]);
+                    }
+                    else {
+                        doSprite(window.quad[1], coord, [window.scope,window.scope]);
+                    }
+                    me[0][1] = false
                 }
                 power = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1])[1];
 
@@ -619,6 +621,7 @@ class Slot {
                     if (power[1] > power[0] && window.TempObj[1][0] > 0 && window.TempObj[0][0] == "computer") {
                         power[0] = power[0] + 1
                         window.TempObj[1][0] = window.TempObj[1][0] - 1
+                        me[0][1] = true
                     }
                 }
                 //if (window.TempObj[3][3][2].length == undefined) {window.TempObj[3][3][2].length = 0}
@@ -636,32 +639,40 @@ class Slot {
                                 case 51:
                                     window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]-1));
                                     if (window.TempObj == undefined) {
+                                        updSlot(this.RealCoord);
                                         window.obj.delete(this.RealCoord[0]+','+this.RealCoord[1]);
                                         window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]-1),me)
+                                        window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]-1))[0][1] = true
                                     }
                                     power[0]--
                                     break
                                 case 52:
                                     window.TempObj = window.obj.get((this.RealCoord[0]+1)+','+this.RealCoord[1]);
                                     if (window.TempObj == undefined) {
+                                        updSlot(this.RealCoord);
                                         window.obj.delete(this.RealCoord[0]+','+this.RealCoord[1]);
                                         window.obj.set((this.RealCoord[0]+1)+','+this.RealCoord[1],me)
+                                        window.obj.get((this.RealCoord[0]+1)+','+this.RealCoord[1])[0][1] = true
                                     }
                                     power[0]--
                                     break
                                 case 53:
                                     window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1));
                                     if (window.TempObj == undefined) {
+                                        updSlot(this.RealCoord);
                                         window.obj.delete(this.RealCoord[0]+','+this.RealCoord[1]);
                                         window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]+1),me)
+                                        window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1))[0][1] = true
                                     }
                                     power[0]--
                                     break
                                 case 54:
                                     window.TempObj = window.obj.get((this.RealCoord[0]-1)+','+this.RealCoord[1]);
                                     if (window.TempObj == undefined) {
+                                        updSlot(this.RealCoord);
                                         window.obj.delete(this.RealCoord[0]+','+this.RealCoord[1]);
                                         window.obj.set((this.RealCoord[0]-1)+','+this.RealCoord[1],me)
+                                        window.obj.get((this.RealCoord[0]-1)+','+this.RealCoord[1])[0][1] = true
                                     }
                                     power[0]--
                                     break
@@ -675,7 +686,10 @@ class Slot {
                                             }
                                             else {
                                                 me[3][3][3] = window.TempObj
+                                                updSlot(this.RealCoord);
                                                 window.obj.delete(this.RealCoord[0]+','+(this.RealCoord[1]-1));
+                                                me[0][1] = true
+                                                me[3][3][3][0][1] = true
                                             }
                                             break
                                         case 52:
@@ -686,7 +700,10 @@ class Slot {
                                             }
                                             else {
                                                 me[3][3][3] = window.TempObj
+                                                updSlot(this.RealCoord);
                                                 window.obj.delete((this.RealCoord[0]+1)+','+this.RealCoord[1]);
+                                                me[0][1] = true
+                                                me[3][3][3][0][1] = true
                                             }
                                             break
                                         case 53:
@@ -697,7 +714,10 @@ class Slot {
                                             }
                                             else {
                                                 me[3][3][3] = window.TempObj
+                                                updSlot(this.RealCoord);
                                                 window.obj.delete(this.RealCoord[0]+','+(this.RealCoord[1]+1));
+                                                me[0][1] = true
+                                                me[3][3][3][0][1] = true
                                             }
                                             break
                                         case 54:
@@ -708,7 +728,10 @@ class Slot {
                                             }
                                             else {
                                                 me[3][3][3] = window.TempObj
+                                                updSlot(this.RealCoord);
                                                 window.obj.delete((this.RealCoord[0]-1)+','+this.RealCoord[1]);
+                                                me[0][1] = true
+                                                me[3][3][3][0][1] = true
                                             }
                                             break
                                         default:
@@ -719,7 +742,10 @@ class Slot {
                                             }
                                             else {
                                                 me[3][3][3] = window.TempObj
+                                                updSlot(this.RealCoord);
                                                 window.obj.delete(this.RealCoord[0]+','+(this.RealCoord[1]+1));
+                                                me[0][1] = true
+                                                me[3][3][3][0][1] = true
                                             }
                                             break
                                     }
@@ -731,40 +757,50 @@ class Slot {
                                             window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]-1));
                                             if (me[3][3][3] == undefined) {}
                                             else if (window.TempObj == undefined) {
+                                                updSlot(this.RealCoord);
                                                 window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]-1), me[3][3][3]);
                                                 me[3][3][3] = [];
+                                                me[0][1] = true
                                             }
                                             break
                                         case 52:
                                             window.TempObj = window.obj.get((this.RealCoord[0]+1)+','+this.RealCoord[1]);
                                             if (me[3][3][3] == undefined) {}
                                             else if (window.TempObj == undefined) {
+                                                updSlot(this.RealCoord);
                                                 window.obj.set((this.RealCoord[0]+1)+','+this.RealCoord[1], me[3][3][3]);
                                                 me[3][3][3] = [];
+                                                me[0][1] = true
                                             }
                                             break
                                         case 53:
                                             window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1));
                                             if (me[3][3][3] == undefined) {}
                                             else if (window.TempObj == undefined) {
+                                                updSlot(this.RealCoord);
                                                 window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]+1), me[3][3][3]);
                                                 me[3][3][3] = [];
+                                                me[0][1] = true
                                             }
                                             break
                                         case 54:
                                             window.TempObj = window.obj.get((this.RealCoord[0]-1)+','+this.RealCoord[1]);
                                             if (me[3][3][3] == undefined) {}
                                             else if (window.TempObj == undefined) {
+                                                updSlot(this.RealCoord);
                                                 window.obj.set((this.RealCoord[0]-1)+','+this.RealCoord[1], me[3][3][3]);
                                                 me[3][3][3] = [];
+                                                me[0][1] = true
                                             }
                                             break
                                         default:
                                             window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1));
                                             if (me[3][3][3] == undefined) {}
                                             else if (window.TempObj == undefined) {
+                                                updSlot(this.RealCoord);
                                                 window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]+1), me[3][3][3]);
                                                 me[3][3][3] = [];
+                                                me[0][1] = true
                                             }
                                             break
                                     }
@@ -773,9 +809,11 @@ class Slot {
                                 case 57:
                                     window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]-1));
                                     if (window.TempObj == undefined) {
+                                        updSlot(this.RealCoord);
                                         window.obj.delete(this.RealCoord[0]+','+this.RealCoord[1]);
                                         window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]-1),me)
                                         power[0]--
+                                        window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]-1))[0][1] = true
                                     }
                                     else {
                                         me[3][3][0]--
@@ -784,9 +822,11 @@ class Slot {
                                 case 58:
                                     window.TempObj = window.obj.get((this.RealCoord[0]+1)+','+this.RealCoord[1]);
                                     if (window.TempObj == undefined) {
+                                        updSlot(this.RealCoord);
                                         window.obj.delete(this.RealCoord[0]+','+this.RealCoord[1]);
                                         window.obj.set((this.RealCoord[0]+1)+','+this.RealCoord[1],me)
                                         power[0]--
+                                        window.obj.get((this.RealCoord[0]+1)+','+this.RealCoord[1])[0][1] = true
                                     }
                                     else {
                                         me[3][3][0]--
@@ -795,9 +835,11 @@ class Slot {
                                 case 59:
                                     window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1));
                                     if (window.TempObj == undefined) {
+                                        updSlot(this.RealCoord);
                                         window.obj.delete(this.RealCoord[0]+','+this.RealCoord[1]);
                                         window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]+1),me)
                                         power[0]--
+                                        window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1))[0][1] = true
                                     }
                                     else {
                                         me[3][3][0]--
@@ -806,9 +848,11 @@ class Slot {
                                 case 60:
                                     window.TempObj = window.obj.get((this.RealCoord[0]-1)+','+this.RealCoord[1]);
                                     if (window.TempObj == undefined) {
+                                        updSlot(this.RealCoord);
                                         window.obj.delete(this.RealCoord[0]+','+this.RealCoord[1]);
                                         window.obj.set((this.RealCoord[0]-1)+','+this.RealCoord[1],me)
                                         power[0]--
+                                        window.obj.get((this.RealCoord[0]-1)+','+this.RealCoord[1])[0][1] = true
                                     }
                                     else {
                                         me[3][3][0]--
@@ -868,6 +912,12 @@ class Slot {
                     }
                 }
 
+                if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                    updSlot(this.RealCoord);
+                    doSprite(window.sand, coord, [window.scope,window.scope]);
+                    me[0][1] = false
+                }
+
                 if (me[3][3][1] > me[3][3][0]) {
                     me[3][3][0]++
                     if (me[3][3][0] == me[3][3][1]) {
@@ -875,21 +925,19 @@ class Slot {
                             power[0]--
                         }
                         window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1));
-                        if (window.TempObj == undefined && this.RealCoord[1] != map[1]) {
+                        if (window.TempObj == undefined && this.RealCoord[1] < map[1]) {
                             window.obj.delete(this.RealCoord[0]+','+this.RealCoord[1]);
-                            //updSlot(this.RealCoord);
-                            window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]+1),me)
+                            updSlot(this.RealCoord);
+                            window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]+1),me);
+                            window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1))[0][1] = true
                         }
                         me[3][3][0] = 0;
                     }
                 }
 
                 if (power[0] == power[1]) {
-                    window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], ["glass",[0,0],[true,true,true,true],[0,[true,true,true,true],[false,false,false,false]]]);
-                }
-                if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
-                    doSprite(window.sand, coord, [window.scope,window.scope]);
-                    me[0][1] = false
+                    updSlot(this.RealCoord)
+                    window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["glass",true],[0,0],[true,true,true,true],[0,[true,true,true,true],[false,false,false,false]]]);
                 }
                 //doRedSprite(window.sand, coord, [window.scope,window.scope], power[0]);
                 break
@@ -982,23 +1030,48 @@ class Gui {
     }
 }
 
+class Tab {
+    constructor() {
+        this.pos1 = [];
+        this.pos2 = [];
+
+        this.op = opin;
+        this.state = 0;
+    }
+    posInteraction(elem1, coord1) {
+        this.pos1 = [coord1[0],coord1[1]];
+        this.pos2 = [coord1[0]+elem1[0],coord1[1]+elem1[1]];
+    }
+    interaction(ret) {
+        if (this.pos1[0] < window.x && this.pos1[1] < window.y && this.pos2[0] > window.x && this.pos2[1] > window.y) {
+            if (window.CLICK == true && this.state == 0) {
+                console.log(ret)
+                this.state = 1
+            }
+            else if (window.CLICK == true && this.state == 1) {
+                this.state = 0
+            }
+        }
+        window.CLICK = false;
+    }
+    show(coord, size, base, state) {
+        this.posInteraction([this.op[this.state][0]*size[0],this.op[this.state][1]*size[1]], coord);
+        this.interaction(ret);
+        doSprite(this.op[this.state],coord,size)
+    }
+}
+
 document.addEventListener('keydown', function(event) {
     if (outSWI == false) {
         if (event.code == 'KeyQ') {
-            if (scope != 0.5) {
-                window.scope++;
-            }
-            else window.scope=1;
+            window.scope++;
             upd = true;
         }
         else if (event.code == 'KeyE') {
-            if (window.scope == 0.5) {
-                null
-            }
-            else if (scope != 1) {
+            if (scope != 1) {
                 window.scope--;
             }
-            else window.scope=0.5;
+            else window.scope=1;
             upd = true;
         }
 
@@ -1042,6 +1115,28 @@ document.addEventListener('keydown', function(event) {
             else {
                 window.con[3] = true;
             }
+            upd = true;
+        }
+
+        if (event.code == 'KeyZ') {
+            obj = new Map();
+            upd = true;
+        }
+
+        if (event.code == 'KeyX') {
+            map[0]--
+            upd = true;
+        }
+        else if (event.code == 'KeyC') {
+            map[0]++
+            upd = true;
+        }
+        if (event.code == 'KeyV') {
+            map[1]--
+            upd = true;
+        }
+        else if (event.code == 'KeyB') {
+            map[1]++
             upd = true;
         }
     }
