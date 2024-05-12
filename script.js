@@ -100,4 +100,3 @@ function fpsCount() {
 }
 fpsCount();
 step();
-//empty
