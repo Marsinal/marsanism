@@ -2,7 +2,7 @@ body = document.querySelector("body")
 body.style.overflow = "hidden"
 body.style.backgroundColor = "#0f0f0f"
 
-disp = document.getElementById("display")
+disp = document.getElementById(".display")
 disp.style.position = "absolute"
 disp.style.margin = "auto"
 disp.style.top = 0
