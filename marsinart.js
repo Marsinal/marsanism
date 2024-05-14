@@ -20,6 +20,9 @@ var pow = 0;
 var me = 0;
 var temp = [[40, 35, 40],0];
 
+var connectBase = [[0,-1],[1,0],[0,1],[-1,0]]
+var revSideBase = [2,3,0,1]
+
 class Display {
     constructor(display, scale, colour) {
         this.display = document.getElementById(display);
@@ -154,15 +157,24 @@ function kickIf(obj,name) {
 
 function isFree(RealCoord,where) {
     window.TempObj = window.obj.get((RealCoord[0]+where[0])+','+(RealCoord[1]+where[1]));
-    if (window.TempObj == undefined || window.TempObj[2][2] == false || window.me[2][0] == false) { return false }
+    if (window.TempObj == undefined) { return false }
     else {
         return true
+    }
+}
+
+function isBlock(RealCoord,where) {
+    window.TempObj = window.obj.get((RealCoord[0]+where[0])+','+(RealCoord[1]+where[1]));
+    if (window.TempObj == undefined || window.TempObj[2][2] == false || window.me[2][0] == false) { return [false,false] }
+    else {
+        return [window.TempObj,true]
     }
 }
 
 function doGui(size, RealCoord) {
     Gui.size = size
     guiCom[0] = true
+    document.querySelector("body").focus()
     guiCom[1] = RealCoord[0]+','+RealCoord[1]
     guiCom[2] = 1;
     Gui.coord = [getCenterX()-Gui.size[0]/2,getCenterY()-Gui.size[1]/2]
@@ -173,64 +185,29 @@ function findEnergy(RealCoord,type) {
     me = window.obj.get(RealCoord[0]+','+RealCoord[1]);
     power = window.obj.get(RealCoord[0]+','+RealCoord[1])[1];
     if (type == 0) {
-        n = me[3][2].filter((value) => value).length;
+        n = [me[3][2].filter((value) => value).length,0];
     }
     else {
-        n = 0
+        n = [0,0]
     }
+    for (let i = 0; i != 4; i++) {
+        n[1] = isBlock(RealCoord,connectBase[i])
+        if (n[1][1]) {
+            if (me[3][2][i] == false) {
+                me[3][2][i] = true;
+            }
 
-    window.TempObj = window.obj.get(RealCoord[0]+','+(RealCoord[1]-1));
-    if (window.TempObj == undefined) { window.TempObj=[0] }
-    else if (window.TempObj[2][2] == false || me[2][0] == false) {}
-    else {
-        me[3][2][0] = true;
-        if (power[1] > power[0] && window.TempObj[1][0] > n && me[3][1][0] == true) {
-            power[0] = power[0] + (n+1)
-            window.TempObj[1][0] = window.TempObj[1][0] - (n+1)
-            if (window.TempObj[3][0] == 1) {
-                window.TempObj[3][1][2] = false
+            if (power[1] > power[0] && n[1][0][1][0] > n[0] && me[3][1][i] == true) {
+                power[0] = power[0] + (n[0]+1)
+                n[1][0][1][0] = n[1][0][1][0] - (n[0]+1)
+                if (n[1][0][3][0] == 1 && n[1][0][3][1][revSideBase[i]]) {
+                    n[1][0][3][1][revSideBase[i]] = false
+                }
             }
         }
-    }
-
-    window.TempObj = window.obj.get((RealCoord[0]+1)+','+RealCoord[1]);
-    if (window.TempObj == undefined) { window.TempObj=[0] }
-    else if (window.TempObj[2][1] == false || me[2][3] == false) {}
-    else {
-        me[3][2][1] = true;
-        if (power[1] > power[0] && window.TempObj[1][0] > n && me[3][1][1] == true) {
-            power[0] = power[0] + (n+1)
-            window.TempObj[1][0] = window.TempObj[1][0] - (n+1)
-            if (window.TempObj[3][0] == 1) {
-                window.TempObj[3][1][3] = false
-            }
-        }
-    }
-
-    window.TempObj = window.obj.get(RealCoord[0]+','+(RealCoord[1]+1));
-    if (window.TempObj == undefined) { window.TempObj=[0] }
-    else if (window.TempObj[2][0] == false || me[2][2] == false) {}
-    else {
-        me[3][2][2] = true;
-        if (power[1] > power[0] && window.TempObj[1][0] > n && me[3][1][2] == true) {
-            power[0] = power[0] + (n+1)
-            window.TempObj[1][0] = window.TempObj[1][0] - (n+1)
-            if (window.TempObj[3][0] == 1) {
-                window.TempObj[3][1][0] = false
-            }
-        }
-    }
-
-    window.TempObj = window.obj.get((RealCoord[0]-1)+','+RealCoord[1]);
-    if (window.TempObj == undefined) { window.TempObj=[0] }
-    else if (window.TempObj[2][3] == false || me[2][1] == false) {}
-    else {
-        me[3][2][3] = true;
-        if (power[1] > power[0] && window.TempObj[1][0] > n && me[3][1][3] == true) {
-            power[0] = power[0] + (n+1)
-            window.TempObj[1][0] = window.TempObj[1][0] - (n+1)
-            if (window.TempObj[3][0] == 1) {
-                window.TempObj[3][1][1] = false
+        else {
+            if (me[3][2][i] == true) {
+                me[3][2][i] = false;
             }
         }
     }
@@ -379,7 +356,7 @@ class Slot {
                     case 7:
                         if (kickIf(window.TempObj[0][0],"lamp")) {
                             updSlot(this.RealCoord)
-                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["lamp",true],[0,5],[true,true,true,true],[0,[true,true,true,true],[false,false,false,false],[0,250]]]);
+                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["lamp",true,false],[0,5],[true,true,true,true],[0,[true,true,true,true],[false,false,false,false],[0,250]]]);
                         }
                         break
                     case 8:
@@ -409,13 +386,13 @@ class Slot {
                     case 12:
                         if (kickIf(window.TempObj[0][0],"furnace")) {
                             updSlot(this.RealCoord)
-                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["furnace",true],[0,100],[false,false,true,false],[0,[true,true,true,true],[false,false,false,false],[0,50]]]);
+                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["furnace",true,false],[0,100],[false,false,true,false],[0,[true,true,true,true],[false,false,false,false],[0,50]]]);
                         }
                         break
                     case 13:
                         if (kickIf(window.TempObj[0][0],"sand")) {
                             updSlot(this.RealCoord)
-                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["sand",true],[0,500],[false,false,false,false],[0,[true,true,true,true],[false,false,false,false],[0,5]]]);
+                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["sand",true],[0,50],[false,false,false,false],[0,[true,true,true,true],[false,false,false,false],[0,5]]]);
                         }
                         break
                     case 14:
@@ -453,79 +430,54 @@ class Slot {
             case "copper_wire":
                 me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
                 power = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1])[1];
-                n = me[3][2].filter((value) => value).length;
-                doSprite(window.copperWire[1], coord, [window.scope,window.scope],power[0]);
-                window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]-1));
-                if (window.TempObj == undefined) { window.TempObj=[0] }
-                else if (window.TempObj[2][2] == false || me[2][0] == false) {}
-                else {
-                    doSprite(window.copperWire[2], coord, [window.scope,window.scope]);
-                    me[3][2][0] = true;
-                    if (power[1] > power[0] && window.TempObj[1][0] > n && me[3][1][0] == true) {
-                        power[0] = power[0] + (n+1)
-                        window.TempObj[1][0] = window.TempObj[1][0] - (n+1)
-                        if (window.TempObj[3][0] == 1) {
-                            window.TempObj[3][1][2] = false
+                n = [me[3][2].filter((value) => value).length,0,false];
+                if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                    updSlot(this.RealCoord)
+                    doSprite(window.copperWire[1], coord, [window.scope,window.scope]);
+                }
+                for (let i = 0; i != 4; i++) {
+                    n[1] = isBlock(this.RealCoord,connectBase[i])
+                    if (n[1][1]) {
+                        if (me[3][2][i] == false) {
+                            me[3][2][i] = true;
+                            n[3] = true;
+                        }
+
+                        if (me[3][1][i] == false) {
+                            if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                                doSprite(window.copperWire[i+6], coord, [window.scope,window.scope]);
+                            }
+                        }
+                        else {
+                            if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                                doSprite(window.copperWire[i+2], coord, [window.scope,window.scope]);
+                            }
+
+                            if (power[1] > power[0] && n[1][0][1][0] > n[0] && me[3][1][i] == true) {
+                                power[0] = power[0] + (n[0]+1)
+                                n[1][0][1][0] = n[1][0][1][0] - (n[0]+1)
+                                if (n[1][0][3][0] == 1 && n[1][0][3][1][revSideBase[i]]) {
+                                    n[1][0][3][1][revSideBase[i]] = false
+                                    n[3] = true
+                                }
+                            }
                         }
                     }
-                    else if (me[3][1][0] == false) {
-                        doSprite(window.copperWire[6], coord, [window.scope,window.scope]);
+                    else {
+                        if (me[3][2][i] == true) {
+                            n[3] = true;
+                        }
+                        me[3][2][i] = false;
                     }
                 }
 
-                window.TempObj = window.obj.get((this.RealCoord[0]+1)+','+this.RealCoord[1]);
-                if (window.TempObj == undefined) { window.TempObj=[0] }
-                else if (window.TempObj[2][1] == false || me[2][3] == false) {}
+                if (n[3]) {
+                    me[0][1] = true
+                }
                 else {
-                    doSprite(window.copperWire[3], coord, [window.scope,window.scope]);
-                    me[3][2][1] = true;
-                    if (power[1] > power[0] && window.TempObj[1][0] > n && me[3][1][1] == true) {
-                        power[0] = power[0] + (n+1)
-                        window.TempObj[1][0] = window.TempObj[1][0] - (n+1)
-                        if (window.TempObj[3][0] == 1) {
-                            window.TempObj[3][1][3] = false
-                        }
-                    }
-                    else if (me[3][1][1] == false) {
-                        doSprite(window.copperWire[7], coord, [window.scope,window.scope]);
-                    }
+                    me[0][1] = false
                 }
 
-                window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1));
-                if (window.TempObj == undefined) { window.TempObj=[0] }
-                else if (window.TempObj[2][0] == false || me[2][2] == false) {}
-                else {
-                    doSprite(window.copperWire[4], coord, [window.scope,window.scope]);
-                    me[3][2][2] = true;
-                    if (power[1] > power[0] && window.TempObj[1][0] > n && me[3][1][2] == true) {
-                        power[0] = power[0] + (n+1)
-                        window.TempObj[1][0] = window.TempObj[1][0] - (n+1)
-                        if (window.TempObj[3][0] == 1) {
-                            window.TempObj[3][1][0] = false
-                        }
-                    }
-                    else if (me[3][1][2] == false) {
-                        doSprite(window.copperWire[8], coord, [window.scope,window.scope]);
-                    }
-                }
-
-                window.TempObj = window.obj.get((this.RealCoord[0]-1)+','+this.RealCoord[1]);
-                if (window.TempObj == undefined) { window.TempObj=[0] }
-                else if (window.TempObj[2][3] == false || me[2][1] == false) {}
-                else {
-                    doSprite(window.copperWire[5], coord, [window.scope,window.scope]);
-                    me[3][2][3] = true;
-                    if (power[1] > power[0] && window.TempObj[1][0] > n && me[3][1][3] == true) {
-                        power[0] = power[0] + (n+1)
-                        window.TempObj[1][0] = window.TempObj[1][0] - (n+1)
-                        if (window.TempObj[3][0] == 1) {
-                            window.TempObj[3][1][1] = false
-                        }
-                    }
-                    else if (me[3][1][3] == false) {
-                        doSprite(window.copperWire[9], coord, [window.scope,window.scope]);
-                    }
-                }
                 power[0] = stab(power[0],power[1])
                 window.obj.get(this.RealCoord[0]+','+this.RealCoord[1])[1][0] = power[0];
                 break
@@ -537,20 +489,31 @@ class Slot {
                 }
                 break
             case "lamp":
-                n = findEnergy(this.RealCoord,1)
-                window.TempObj = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
-                if (n > 0 && window.TempObj[3][3][1] > window.TempObj[3][3][0]) {
-                    doSprite(window.lamp[1], coord, [window.scope,window.scope]);
-                    TempObj[3][3][0]++
-                    if (window.TempObj[3][3][0] == window.TempObj[3][3][1]) {
-                        window.TempObj[3][3][0] = 0;
-                        n--;
+                n = [findEnergy(this.RealCoord,1),0]
+                me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
+                if (n[0] > 0 && me[3][3][1] > me[3][3][0]) {
+                    n[1] = 1
+                    me[3][3][0]++
+                    if (me[0][2] == false) {
+                        me[0][1] = true
+                        me[0][2] = true
+                    }
+                    if (me[3][3][0] == me[3][3][1]) {
+                        me[3][3][0] = 0;
+                        n[0]--;
                     }
                 }
                 else {
-                    doSprite(window.lamp[0], coord, [window.scope,window.scope]);
+                    if (me[0][2]) {
+                        me[0][1] = true
+                        me[0][2] = false
+                    }
                 }
-                window.obj.get(this.RealCoord[0]+','+this.RealCoord[1])[1][0] = n;
+                if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                    doSprite(window.lamp[n[1]], coord, [window.scope,window.scope]);
+                    me[0][1] = false
+                }
+                window.obj.get(this.RealCoord[0]+','+this.RealCoord[1])[1][0] = n[0];
                 break
             case "capacitor":
                 me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
@@ -686,7 +649,7 @@ class Slot {
                                             }
                                             else {
                                                 me[3][3][3] = window.TempObj
-                                                updSlot(this.RealCoord);
+                                                updSlot([this.RealCoord[0],(this.RealCoord[1]-1)]);
                                                 window.obj.delete(this.RealCoord[0]+','+(this.RealCoord[1]-1));
                                                 me[0][1] = true
                                                 me[3][3][3][0][1] = true
@@ -700,7 +663,7 @@ class Slot {
                                             }
                                             else {
                                                 me[3][3][3] = window.TempObj
-                                                updSlot(this.RealCoord);
+                                                updSlot([(this.RealCoord[0]+1),this.RealCoord[1]]);
                                                 window.obj.delete((this.RealCoord[0]+1)+','+this.RealCoord[1]);
                                                 me[0][1] = true
                                                 me[3][3][3][0][1] = true
@@ -714,7 +677,7 @@ class Slot {
                                             }
                                             else {
                                                 me[3][3][3] = window.TempObj
-                                                updSlot(this.RealCoord);
+                                                updSlot([this.RealCoord[0],(this.RealCoord[1]+1)]);
                                                 window.obj.delete(this.RealCoord[0]+','+(this.RealCoord[1]+1));
                                                 me[0][1] = true
                                                 me[3][3][3][0][1] = true
@@ -728,7 +691,7 @@ class Slot {
                                             }
                                             else {
                                                 me[3][3][3] = window.TempObj
-                                                updSlot(this.RealCoord);
+                                                updSlot([(this.RealCoord[0]-1),this.RealCoord[1]]);
                                                 window.obj.delete((this.RealCoord[0]-1)+','+this.RealCoord[1]);
                                                 me[0][1] = true
                                                 me[3][3][3][0][1] = true
@@ -742,7 +705,7 @@ class Slot {
                                             }
                                             else {
                                                 me[3][3][3] = window.TempObj
-                                                updSlot(this.RealCoord);
+                                                updSlot([this.RealCoord[0],(this.RealCoord[1]+1)]);
                                                 window.obj.delete(this.RealCoord[0]+','+(this.RealCoord[1]+1));
                                                 me[0][1] = true
                                                 me[3][3][3][0][1] = true
@@ -872,6 +835,7 @@ class Slot {
             case "furnace":
                 power = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1])[1];
                 me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
+                n = 0
 
                 window.TempObj = window.obj.get(RealCoord[0]+','+(RealCoord[1]+1));
                 if (window.TempObj == undefined) { window.TempObj=[0] }
@@ -886,16 +850,27 @@ class Slot {
                     }
                 }
 
-                if (power[0] > 0 && me[3][3][1] > me[3][3][0]) {
-                    doSprite(window.furn[1], coord, [window.scope,window.scope]);
+                if (n > 0 && me[3][3][1] > me[3][3][0]) {
+                    n = 1
                     me[3][3][0]++
+                    if (me[0][2] == false) {
+                        me[0][1] = true
+                        me[0][2] = true
+                    }
                     if (me[3][3][0] == me[3][3][1]) {
                         me[3][3][0] = 0;
-                        power[0]--;
+                        n--;
                     }
                 }
                 else {
-                    doSprite(window.furn[0], coord, [window.scope,window.scope]);
+                    if (me[0][2]) {
+                        me[0][1] = true
+                        me[0][2] = false
+                    }
+                }
+                if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                    doSprite(window.furn[n], coord, [window.scope,window.scope]);
+                    me[0][1] = false
                 }
                 window.obj.get(this.RealCoord[0]+','+this.RealCoord[1])[1][0] = power[0];
                 break
@@ -985,11 +960,12 @@ class Gui {
                 guiCom[0] = false;
                 out = [];
                 outSWI = false;
+                dis.updateScreen();
+                upd = true
             }
         }
         else if (this.pos1[0] < window.x && this.pos1[1] < window.y && this.pos3[0] > window.x && this.pos3[1] > window.y) {
             this.press = true
-            upd = true
         }
         window.CLICK = false;
         if (isMouseDown == true && this.press) {
@@ -998,35 +974,43 @@ class Gui {
                 this.ratio[1] = window.y - this.coord[1];
             }
             this.coord = [window.x-this.ratio[0],window.y-this.ratio[1]]
+            //displayAtWork[1].fillStyle = "#111111";
+            //displayAtWork[1].fillRect(this.coord[0], this.coord[1], this.pos2[0] - this.coord[0], this.pos2[1] - this.coord[1]);
         }
         else {
-            this.ratio = [];
-            this.press = false;
+            if (this.ratio.length != 0) {
+                this.ratio = [];
+                this.press = false;
+                dis.updateScreen();
+                upd = true
+            }
         }
     }
     show() {
         this.interaction();
         this.posInteraction(this.size, this.coord);
-        displayAtWork[1].fillStyle = "#1b1b1b";
-        displayAtWork[1].fillRect(this.coord[0], this.coord[1], this.pos2[0] - this.coord[0], this.pos2[1] - this.coord[1]);
+        if (isMouseDown == false || this.press == false) {
+            displayAtWork[1].fillStyle = "#1b1b1b";
+            displayAtWork[1].fillRect(this.coord[0], this.coord[1], this.pos2[0] - this.coord[0], this.pos2[1] - this.coord[1]);
 
-        displayAtWork[1].fillStyle = "#2f2f2f";
-        displayAtWork[1].fillRect(this.coord[0], this.coord[1], this.pos3[0] - this.coord[0], this.pos3[1] - this.coord[1]);
+            displayAtWork[1].fillStyle = "#2f2f2f";
+            displayAtWork[1].fillRect(this.coord[0], this.coord[1], this.pos3[0] - this.coord[0], this.pos3[1] - this.coord[1]);
 
-        doRusText(temp[1], [this.coord[0]+20,this.coord[1]+2],13,[2,2])
+            doRusText(temp[1], [this.coord[0]+20,this.coord[1]+2],13,[2,2])
 
-        displayAtWork[1].fillStyle = "#9f0000";
-        displayAtWork[1].fillRect(this.coord[0], this.coord[1], this.pos4[0] - this.coord[0], this.pos4[1] - this.coord[1]);
-        doSprite(lettersRus[50],[this.coord[0],this.pos3[1]],[2,2])
-        n = out
-        if (con[2]) {
-            n.push(50)
+            displayAtWork[1].fillStyle = "#9f0000";
+            displayAtWork[1].fillRect(this.coord[0], this.coord[1], this.pos4[0] - this.coord[0], this.pos4[1] - this.coord[1]);
+            doSprite(lettersRus[50],[this.coord[0],this.pos3[1]],[2,2])
+            n = out
+            if (con[2]) {
+                n.push(50)
+            }
+            else {
+                n.push(36)
+            }
+            doRusText(n, [this.coord[0]+15,this.pos3[1]],12,[2,2])
+            n.pop();
         }
-        else {
-            n.push(36)
-        }
-        doRusText(n, [this.coord[0]+15,this.pos3[1]],12,[2,2])
-        n.pop();
     }
 }
 
