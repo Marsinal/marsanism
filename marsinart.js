@@ -23,6 +23,11 @@ var temp = [[40, 35, 40],0];
 var connectBase = [[0,-1],[1,0],[0,1],[-1,0]]
 var revSideBase = [2,3,0,1]
 
+var connectHor = [[1,0],[-1,0]]
+var revHorSideBase = [3,1]
+
+var filts = [1,3]
+
 class Display {
     constructor(display, scale, colour) {
         this.display = document.getElementById(display);
@@ -157,15 +162,23 @@ function kickIf(obj,name) {
 
 function isFree(RealCoord,where) {
     window.TempObj = window.obj.get((RealCoord[0]+where[0])+','+(RealCoord[1]+where[1]));
-    if (window.TempObj == undefined) { return false }
+    if (window.TempObj == undefined) { return true }
     else {
-        return true
+        return false
     }
 }
 
-function isBlock(RealCoord,where) {
+function isNeedBlock(RealCoord,where) {
     window.TempObj = window.obj.get((RealCoord[0]+where[0])+','+(RealCoord[1]+where[1]));
-    if (window.TempObj == undefined || window.TempObj[2][2] == false || window.me[2][0] == false) { return [false,false] }
+    if (window.TempObj == undefined) { return false }
+    else {
+        return window.TempObj
+    }
+}
+
+function isBlock(RealCoord,where,i,j) {
+    window.TempObj = window.obj.get((RealCoord[0]+where[0])+','+(RealCoord[1]+where[1]));
+    if (window.TempObj == undefined || window.TempObj[2][i] == false || window.me[2][j] == false) { return [false,false] }
     else {
         return [window.TempObj,true]
     }
@@ -224,15 +237,6 @@ function updSlot(RealCoord) {
     if (con[3]) {
         displayAtWork[1].strokeStyle = "#2a2a2a";
         displayAtWork[1].strokeRect(RealCoord[0]*16*scope+(start[0]*16*scope), RealCoord[1]*16*scope+(start[1]*16*scope), 16*scope, 16*scope);
-    }
-}
-
-function updHad(upd) {
-    if (upd) {
-        return true
-    }
-    else {
-        return false
     }
 }
 
@@ -350,7 +354,7 @@ class Slot {
                     case 6:
                         if (kickIf(window.TempObj[0][0],"computer")) {
                             updSlot(this.RealCoord)
-                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["computer",true],[0,1],[true,true,true,true],[0,[true,true,true,true],[false,false,false,false],[]]]);
+                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["computer",true],[0,1],[false,true,true,true],[0,[true,true,true,true],[false,false,false,false],[]]]);
                         }
                         break
                     case 7:
@@ -401,6 +405,24 @@ class Slot {
                             window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["bricks",true],[0,0],[false,false,false,false],[0,[true,true,true,true],[false,false,false,false]]]);
                         }
                         break
+                    case 15:
+                        if (kickIf(window.TempObj[0][0],"filter")) {
+                            updSlot(this.RealCoord)
+                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["filter",true],[0,0],[false,false,false,false],[1,[true,true,true,true],[false,false,false,false]]]);
+                        }
+                        break
+                    case 16:
+                        if (kickIf(window.TempObj[0][0],"gravel")) {
+                            updSlot(this.RealCoord)
+                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["gravel",true],[0,50],[false,false,false,false],[0,[true,true,true,true],[false,false,false,false],[0,5]]]);
+                        }
+                        break
+                    case 17:
+                        if (kickIf(window.TempObj[0][0],"dirt")) {
+                            updSlot(this.RealCoord)
+                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["dirt",true],[0,0],[false,false,false,false],[0,[true,true,true,true],[false,false,false,false],[0,500],[0,false]]]);
+                        }
+                        break
                     default:
                         break
                 }
@@ -420,7 +442,7 @@ class Slot {
         switch(window.TempObj[0][0]) {
             case "battery":
                 me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
-                if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
                     doSprite(window.battery, coord, [window.scope,window.scope]);
                     me[0][1] = false
                 }
@@ -431,12 +453,12 @@ class Slot {
                 me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
                 power = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1])[1];
                 n = [me[3][2].filter((value) => value).length,0,false];
-                if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
                     updSlot(this.RealCoord)
                     doSprite(window.copperWire[1], coord, [window.scope,window.scope]);
                 }
                 for (let i = 0; i != 4; i++) {
-                    n[1] = isBlock(this.RealCoord,connectBase[i])
+                    n[1] = isBlock(this.RealCoord,connectBase[i],revSideBase[i],i)
                     if (n[1][1]) {
                         if (me[3][2][i] == false) {
                             me[3][2][i] = true;
@@ -444,12 +466,12 @@ class Slot {
                         }
 
                         if (me[3][1][i] == false) {
-                            if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                            if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
                                 doSprite(window.copperWire[i+6], coord, [window.scope,window.scope]);
                             }
                         }
                         else {
-                            if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                            if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
                                 doSprite(window.copperWire[i+2], coord, [window.scope,window.scope]);
                             }
 
@@ -483,7 +505,7 @@ class Slot {
                 break
             case "computer":
                 n = findEnergy(this.RealCoord,0)
-                if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
                     doSprite(window.comp, coord, [window.scope,window.scope]);
                     me[0][1] = false
                 }
@@ -509,7 +531,7 @@ class Slot {
                         me[0][2] = false
                     }
                 }
-                if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
                     doSprite(window.lamp[n[1]], coord, [window.scope,window.scope]);
                     me[0][1] = false
                 }
@@ -518,7 +540,7 @@ class Slot {
             case "capacitor":
                 me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
                 n = findEnergy(this.RealCoord,0)
-                if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
                     doSprite(window.capa, coord, [window.scope,window.scope]);
                     me[0][1] = false
                 }
@@ -528,42 +550,40 @@ class Slot {
             case "mine":
                 me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
                 window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]-1));
-                if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
                     doSprite(window.mine, coord, [window.scope,window.scope]);
                     me[0][1] = false
                 }
                 if (me[3][3][1] > me[3][3][0] && window.TempObj == undefined) {
                     me[3][3][0]++
                     if (me[3][3][0] == me[3][3][1]) {
-                        window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]-1), [["sand",true],[0,500],[true,true,true,true],[0,[true,true,true,true],[false,false,false,false],[0,5]]]);
+                        window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]-1), [["gravel",true],[0,50],[false,false,false,false],[0,[true,true,true,true],[false,false,false,false],[0,5]]]);
                         me[3][3][0] = 0;
                         me[0][1] = true
                     }
                     else if ((me[3][3][0] + 10) == me[3][3][1]) {
-                        doSprite(window.sand, coord, [window.scope,window.scope]);
+                        doSprite(window.gravel, coord, [window.scope,window.scope]);
                     }
                 }
                 break
             case "solar_panel":
-                n = findEnergy(this.RealCoord,1)
+                //n = findEnergy(this.RealCoord,1)
                 me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
-                window.TempObj = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
-                if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
                     doSprite(window.sol, coord, [window.scope,window.scope]);
                     me[0][1] = false
                 }
-                if (window.TempObj[1][1] > window.TempObj[1][0] && window.TempObj[3][3][1] > window.TempObj[3][3][0]) {
-                    TempObj[3][3][0]++
-                    if (window.TempObj[3][3][0] == window.TempObj[3][3][1]) {
-                        window.TempObj[3][3][0] = 0;
-                        n++;
+                if (me[1][1] > me[1][0] && me[3][3][1] > me[3][3][0]) {
+                    me[3][3][0]++
+                    if (me[3][3][0] == me[3][3][1]) {
+                        me[3][3][0] = 0;
+                        me[1][0]++;
                     }
                 }
-                window.obj.get(this.RealCoord[0]+','+this.RealCoord[1])[1][0] = n;
                 break
             case "quad":
                 me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
-                if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
                     updSlot(this.RealCoord);
                     if (me[3][3][3] == undefined) {
                         doSprite(window.quad[0], coord, [window.scope,window.scope]);
@@ -850,16 +870,16 @@ class Slot {
                     }
                 }
 
-                if (n > 0 && me[3][3][1] > me[3][3][0]) {
-                    n = 1
+                if (power > 0 && me[3][3][1] > me[3][3][0]) {
                     me[3][3][0]++
                     if (me[0][2] == false) {
+                        n = 1
                         me[0][1] = true
                         me[0][2] = true
                     }
                     if (me[3][3][0] == me[3][3][1]) {
                         me[3][3][0] = 0;
-                        n--;
+                        power--;
                     }
                 }
                 else {
@@ -868,7 +888,7 @@ class Slot {
                         me[0][2] = false
                     }
                 }
-                if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
                     doSprite(window.furn[n], coord, [window.scope,window.scope]);
                     me[0][1] = false
                 }
@@ -887,7 +907,7 @@ class Slot {
                     }
                 }
 
-                if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
                     updSlot(this.RealCoord);
                     doSprite(window.sand, coord, [window.scope,window.scope]);
                     me[0][1] = false
@@ -918,17 +938,80 @@ class Slot {
                 break
             case "glass":
                 me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
-                if (upd || updHad(me[0][1])) {
+                if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
                     doSprite(window.glass, coord, [window.scope,window.scope]);
                     me[0][1] = false
                 }
                 break
             case "bricks":
                 me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
-                if ((upd || updHad(me[0][1])) && onScreen(this.RealCoord)) {
+                if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
                     doSprite(window.bricks, coord, [window.scope,window.scope]);
                     me[0][1] = false
                 }
+                break
+            case "filter":
+                me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
+                if (isFree(this.RealCoord,[0,1])) {
+                    n = isNeedBlock(this.RealCoord,[0,-1])
+                    if (n == false) {n = [[""]]}
+                    switch(n[0][0]) {
+                        case "gravel":
+                            n = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]-1));
+                            n[0][0] = "sand"
+                            n[0][1] = true
+                            window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]-1),[["air"]])
+                            window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]+1),n)
+                            break
+                        default:
+                            break
+                    }
+                }
+                if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
+                    doSprite(window.filt, coord, [window.scope,window.scope]);
+                    me[0][1] = false
+                }
+                break
+            case "gravel":
+                me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
+                power = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1])[1];
+                window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1));
+
+                if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
+                    updSlot(this.RealCoord);
+                    doSprite(window.gravel, coord, [window.scope,window.scope]);
+                    me[0][1] = false
+                }
+
+                if (me[3][3][1] > me[3][3][0]) {
+                    me[3][3][0]++
+                    if (me[3][3][0] == me[3][3][1]) {
+                        if (power[0] > 0) {
+                            power[0]--
+                        }
+                        window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1));
+                        if (window.TempObj == undefined && this.RealCoord[1] < map[1]) {
+                            window.obj.delete(this.RealCoord[0]+','+this.RealCoord[1]);
+                            updSlot(this.RealCoord);
+                            window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]+1),me);
+                            window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1))[0][1] = true
+                        }
+                        me[3][3][0] = 0;
+                    }
+                }
+                break
+            case "dirt":
+                me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
+                if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
+                    doSprite(window.dirt, coord, [window.scope,window.scope]);
+                    me[0][1] = false
+                }
+                break
+            case "air":
+                updSlot(this.RealCoord);
+                window.obj.delete(this.RealCoord[0]+','+this.RealCoord[1]);
+                break
+            default:
                 break
         }
     }
