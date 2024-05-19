@@ -732,7 +732,7 @@ class Slot {
                                     switch(me[3][3][2][me[3][3][0]-1]) {
                                         case 51:
                                             window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]-1));
-                                            if (me[3][3][3] != undefined) {}
+                                            if (me[3][3][3] == undefined) {}
                                             else if (window.TempObj == undefined) {
                                                 me[3][3][0]--
                                             }
@@ -746,7 +746,7 @@ class Slot {
                                             break
                                         case 52:
                                             window.TempObj = window.obj.get((this.RealCoord[0]+1)+','+this.RealCoord[1]);
-                                            if (me[3][3][3] != undefined) {}
+                                            if (me[3][3][3] == undefined) {}
                                             else if (window.TempObj == undefined) {
                                                 me[3][3][0]--
                                             }
@@ -760,7 +760,7 @@ class Slot {
                                             break
                                         case 53:
                                             window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1));
-                                            if (me[3][3][3] != undefined) {}
+                                            if (me[3][3][3] == undefined) {}
                                             else if (window.TempObj == undefined) {
                                                 me[3][3][0]--
                                             }
@@ -774,7 +774,7 @@ class Slot {
                                             break
                                         case 54:
                                             window.TempObj = window.obj.get((this.RealCoord[0]-1)+','+this.RealCoord[1]);
-                                            if (me[3][3][3] != undefined) {}
+                                            if (me[3][3][3] == undefined) {}
                                             else if (window.TempObj == undefined) {
                                                 me[3][3][0]--
                                             }
@@ -789,7 +789,7 @@ class Slot {
                                         default:
                                             window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1));
                                             if (me[3][3][3] == undefined) {}
-                                            else if (window.TempObj != undefined) {
+                                            else if (window.TempObj == undefined) {
                                                 me[3][3][0]--
                                             }
                                             else {
