@@ -28,6 +28,8 @@ var revHorSideBase = [3,1]
 
 var filts = [1,3]
 
+save1 = [["air"]];
+
 class Display {
     constructor(display, scale, colour) {
         this.display = document.getElementById(display);
@@ -209,8 +211,8 @@ function findEnergy(RealCoord,type) {
             if (me[3][2][i] == false) {
                 me[3][2][i] = true;
             }
-
-            if (power[1] > power[0] && n[1][0][1][0] > n[0] && me[3][1][i] == true) {
+            //me[3][1][i] == true
+            if (power[1] > power[0] && n[1][0][1][0] > n[0] && me[2][i] == true) {
                 power[0] = power[0] + (n[0]+1)
                 n[1][0][1][0] = n[1][0][1][0] - (n[0]+1)
                 if (n[1][0][3][0] == 1 && n[1][0][3][1][revSideBase[i]]) {
@@ -246,6 +248,46 @@ function onScreen(RealCoord) {
     }
     else {
         return true
+    }
+}
+
+function drop(RealCoord,texture,coord) {
+    me = window.obj.get(RealCoord[0]+','+RealCoord[1]);
+
+    if ((upd || me[0][1]) && onScreen(RealCoord)) {
+        updSlot(RealCoord);
+        doSprite(texture, coord, [window.scope,window.scope]);
+        me[0][1] = false
+    }
+
+    if (isFree(RealCoord,[0,1])) {
+        if (me[3][3][1] > me[3][3][0]) {
+            me[3][3][0]++
+            if (me[3][3][0] == me[3][3][1]) {
+                window.TempObj = window.obj.get(RealCoord[0]+','+(RealCoord[1]+1));
+                if (window.TempObj == undefined && RealCoord[1] < map[1]) {
+                    window.obj.delete(RealCoord[0]+','+RealCoord[1]);
+                    updSlot(RealCoord);
+                    window.obj.set(RealCoord[0]+','+(RealCoord[1]+1),me);
+                    window.obj.get(RealCoord[0]+','+(RealCoord[1]+1))[0][1] = true
+                }
+                me[3][3][0] = 0;
+            }
+        }
+    }
+}
+
+function grow(RealCoord, id,texture,coord) {
+    if (me[3][3][1] > me[3][3][0] && window.TempObj == undefined) {
+        me[3][3][0]++
+        if (me[3][3][0] == me[3][3][1]) {
+            window.obj.set(RealCoord[0]+','+(RealCoord[1]-1), [[id,true],[0,0],[false,false,false,false],[0,[true,true,true,true],[false,false,false,false],[0,5]]]);
+            me[3][3][0] = 0;
+            me[0][1] = true
+        }
+        else if ((me[3][3][0] + 10) == me[3][3][1]) {
+            doSprite(texture, coord, [window.scope,window.scope]);
+        }
     }
 }
 
@@ -420,7 +462,35 @@ class Slot {
                     case 17:
                         if (kickIf(window.TempObj[0][0],"dirt")) {
                             updSlot(this.RealCoord)
-                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["dirt",true],[0,0],[false,false,false,false],[0,[true,true,true,true],[false,false,false,false],[0,500],[0,false]]]);
+                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["dirt",true],[0,0],[false,false,false,false],[0,[true,true,true,true],[false,false,false,false],[0,500],0]]);
+                        }
+                        break
+                    case 18:
+                        if (kickIf(window.TempObj[0][0],"sunflower_seeds")) {
+                            updSlot(this.RealCoord)
+                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["sunflower_seeds",true],[0,0],[false,false,false,false],[0,[true,true,true,true],[false,false,false,false],[0,5]]]);
+                        }
+                        break
+                    case 19:
+                        if (kickIf(window.TempObj[0][0],"trash")) {
+                            updSlot(this.RealCoord)
+                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["trash",true],[0,0],[false,false,false,false],[0,[true,true,true,true],[false,false,false,false]]]);
+                        }
+                        break
+                    case 20:
+                        if (kickIf(window.TempObj[0][0],"melon_seeds")) {
+                            updSlot(this.RealCoord)
+                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["melon_seeds",true],[0,0],[false,false,false,false],[0,[true,true,true,true],[false,false,false,false],[0,5]]]);
+                        }
+                        break
+                    case 21:
+                        window.save1 = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
+                        if (window.save1 == undefined) {window.save1 = [["air"]]}
+                    case 22:
+                        if (kickIf(window.TempObj[0][0],window.save1[0][0])) {
+                            updSlot(this.RealCoord)
+                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], window.save1);
+                            upd = true
                         }
                         break
                     default:
@@ -604,7 +674,6 @@ class Slot {
                     if (power[1] > power[0] && window.TempObj[1][0] > 0 && window.TempObj[0][0] == "computer") {
                         power[0] = power[0] + 1
                         window.TempObj[1][0] = window.TempObj[1][0] - 1
-                        me[0][1] = true
                     }
                 }
                 //if (window.TempObj[3][3][2].length == undefined) {window.TempObj[3][3][2].length = 0}
@@ -663,7 +732,7 @@ class Slot {
                                     switch(me[3][3][2][me[3][3][0]-1]) {
                                         case 51:
                                             window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]-1));
-                                            if (me[3][3][3] == undefined) {}
+                                            if (me[3][3][3] != undefined) {}
                                             else if (window.TempObj == undefined) {
                                                 me[3][3][0]--
                                             }
@@ -677,7 +746,7 @@ class Slot {
                                             break
                                         case 52:
                                             window.TempObj = window.obj.get((this.RealCoord[0]+1)+','+this.RealCoord[1]);
-                                            if (me[3][3][3] == undefined) {}
+                                            if (me[3][3][3] != undefined) {}
                                             else if (window.TempObj == undefined) {
                                                 me[3][3][0]--
                                             }
@@ -691,7 +760,7 @@ class Slot {
                                             break
                                         case 53:
                                             window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1));
-                                            if (me[3][3][3] == undefined) {}
+                                            if (me[3][3][3] != undefined) {}
                                             else if (window.TempObj == undefined) {
                                                 me[3][3][0]--
                                             }
@@ -705,7 +774,7 @@ class Slot {
                                             break
                                         case 54:
                                             window.TempObj = window.obj.get((this.RealCoord[0]-1)+','+this.RealCoord[1]);
-                                            if (me[3][3][3] == undefined) {}
+                                            if (me[3][3][3] != undefined) {}
                                             else if (window.TempObj == undefined) {
                                                 me[3][3][0]--
                                             }
@@ -720,7 +789,7 @@ class Slot {
                                         default:
                                             window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1));
                                             if (me[3][3][3] == undefined) {}
-                                            else if (window.TempObj == undefined) {
+                                            else if (window.TempObj != undefined) {
                                                 me[3][3][0]--
                                             }
                                             else {
@@ -963,6 +1032,27 @@ class Slot {
                             window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]-1),[["air"]])
                             window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]+1),n)
                             break
+                        case "sunflower":
+                            n = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]-1));
+                            n[0][0] = "sunflower_seeds"
+                            n[0][1] = true
+                            window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]-1),[["air"]])
+                            window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]+1),n)
+                            break
+                        case "melon":
+                            n = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]-1));
+                            n[0][0] = "melon_slice"
+                            n[0][1] = true
+                            window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]-1),[["air"]])
+                            window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]+1),n)
+                            break
+                        case "melon_slice":
+                            n = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]-1));
+                            n[0][0] = "melon_seeds"
+                            n[0][1] = true
+                            window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]-1),[["air"]])
+                            window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]+1),n)
+                            break
                         default:
                             break
                     }
@@ -973,38 +1063,98 @@ class Slot {
                 }
                 break
             case "gravel":
-                me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
-                power = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1])[1];
-                window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1));
-
-                if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
-                    updSlot(this.RealCoord);
-                    doSprite(window.gravel, coord, [window.scope,window.scope]);
-                    me[0][1] = false
-                }
-
-                if (me[3][3][1] > me[3][3][0]) {
-                    me[3][3][0]++
-                    if (me[3][3][0] == me[3][3][1]) {
-                        if (power[0] > 0) {
-                            power[0]--
-                        }
-                        window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1));
-                        if (window.TempObj == undefined && this.RealCoord[1] < map[1]) {
-                            window.obj.delete(this.RealCoord[0]+','+this.RealCoord[1]);
-                            updSlot(this.RealCoord);
-                            window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]+1),me);
-                            window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]+1))[0][1] = true
-                        }
-                        me[3][3][0] = 0;
-                    }
-                }
+                drop(this.RealCoord,window.gravel,coord)
                 break
             case "dirt":
                 me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
+                window.TempObj = window.obj.get(this.RealCoord[0]+','+(this.RealCoord[1]-1));
                 if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
-                    doSprite(window.dirt, coord, [window.scope,window.scope]);
+                    switch(me[3][4]) {
+                        case 0:
+                            doSprite(window.dirt, coord, [window.scope,window.scope]);
+                            break
+                        case 1:
+                            n = isNeedBlock(this.RealCoord,[0,-1])
+                            if (n == false) {n = [[""]]}
+                            if (n[0][0] == "sunflower") {
+                                doSprite(window.sunfl[1], coord, [window.scope,window.scope]);
+                            }
+                            else {
+                                doSprite(window.sunfl[0], coord, [window.scope,window.scope]);
+                            }
+                            break
+                        case 2:
+                            n = isNeedBlock(this.RealCoord,[0,-1])
+                            if (n == false) {n = [[""]]}
+                            if (n[0][0] == "melon") {
+                                doSprite(window.melon[1], coord, [window.scope,window.scope]);
+                            }
+                            else {
+                                doSprite(window.melon[0], coord, [window.scope,window.scope]);
+                            }
+                            break
+                        default:
+                            break
+                    }
                     me[0][1] = false
+                }
+                switch(me[3][4]) {
+                    case 1:
+                        grow(this.RealCoord,"sunflower",window.sunfl[2],coord)
+                        break
+                    case 2:
+                        grow(this.RealCoord,"melon",window.melon[2],coord)
+                        break
+                    default:
+                        break
+                }
+                if (me[3][3][0] == 1) {
+                    me[0][1] = true
+                }
+                break
+            case "sunflower":
+                drop(this.RealCoord,window.sunfl[2],coord)
+                break
+            case "sunflower_seeds":
+                drop(this.RealCoord,window.sunfl[3],coord)
+
+                n = isNeedBlock(this.RealCoord,[0,1])
+                if (n == false) { n = [[""]] }
+
+                if (n[0][0] == "dirt") {
+                    updSlot(this.RealCoord);
+                    window.obj.delete(this.RealCoord[0]+','+this.RealCoord[1]);
+                    n[3][4] = 1
+                    n[0][1] = true
+                }
+                break
+            case "melon":
+                drop(this.RealCoord,window.melon[2],coord)
+                break
+            case "melon_slice":
+                drop(this.RealCoord,window.melon[3],coord)
+                break
+            case "melon_seeds":
+                drop(this.RealCoord,window.melon[4],coord)
+
+                n = isNeedBlock(this.RealCoord,[0,1])
+                if (n == false) { n = [[""]] }
+
+                if (n[0][0] == "dirt") {
+                    updSlot(this.RealCoord);
+                    window.obj.delete(this.RealCoord[0]+','+this.RealCoord[1]);
+                    n[3][4] = 2
+                    n[0][1] = true
+                }
+                break
+            case "trash":
+                me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
+                if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
+                    doSprite(window.trash, coord, [window.scope,window.scope]);
+                    me[0][1] = false
+                }
+                if (isFree(this.RealCoord,[0,-1]) == false) {
+                    window.obj.set(this.RealCoord[0]+','+(this.RealCoord[1]-1),[["air"]])
                 }
                 break
             case "air":
