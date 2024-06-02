@@ -355,7 +355,7 @@ function type(event) {
                 break
             case "KeyA":
                 out.push(21)
-                break
+            break
             case "BracketLeft":
                 out.push(22)
                 break
@@ -466,6 +466,9 @@ function type(event) {
             case "Equal":
                 out.push(55)
                 break
+            case "CapsLock":
+                out.push(55)
+                break
             case "ControlLeft":
                 if (con[2]) {
                     out.push(61)
@@ -488,7 +491,6 @@ function type(event) {
             case "ShiftLeft":
                 if (con[2]) {
                     con[2] = false
-                    console.log(con[2])
                 }
                 else {
                     con[2] = true
@@ -585,14 +587,145 @@ function process() {
             }
         }
     }
-    else if (out[0] == 6 && window.obj.get(guiCom[1])[0][0] == "computer") {
-        if (out.length == 1) {
-            out = RusToDis('данные о движении '+window.obj.get(guiCom[1])[3][3]);
+    if (out[0] == 6) {
+        if (window.obj.get(guiCom[1])[0][0] == "computer") {
+            if (out.length == 1) {
+                out = RusToDis('данные о движении '+window.obj.get(guiCom[1])[3][3]);
+            }
+            else if (out[1] == 33 && out.length > 2) {
+                TempObj = out.slice(2)
+                window.obj.get(guiCom[1])[3][3] = TempObj
+                out = RusToDis('данные о движении записаны '+window.obj.get(guiCom[1])[3][3]);
+            }
         }
-        else if (out[1] == 33 && out.length > 2) {
-            TempObj = out.slice(2)
-            window.obj.get(guiCom[1])[3][3] = TempObj
-            out = RusToDis('данные о движении записаны '+window.obj.get(guiCom[1])[3][3]);
+        else if (window.obj.get(guiCom[1])[0][0] == "teslacoil") {
+            if (out.length == 1) {
+                out = RusToDis('данные о передаче '+window.obj.get(guiCom[1])[3][3]);
+            }
+            else if (out[1] == 33 && out.length > 2) {
+                TempObj = out.slice(2)
+                n = [0,0]
+                for (let i = 0; i != TempObj.length; i++) {
+                    switch (TempObj[i]) {
+                        case 51:
+                            n[1]--
+                            break
+                        case 52:
+                            n[0]++
+                            break
+                        case 53:
+                            n[1]++
+                            break
+                        case 54:
+                            n[0]--
+                            break
+                        default:
+                            break
+                    }
+                }
+                window.obj.get(guiCom[1])[3][3] = n
+                out = RusToDis('данные о передаче записаны '+out.slice(2));
+            }
+        }
+
+        else if (out[1] == 6 && window.obj.get(guiCom[1])[0][0] == "disk") {
+            if (out.length == 2) {
+                out = RusToDis('данные передачи диска '+window.obj.get(guiCom[1])[3][4][1]);
+            }
+            else if (out[2] == 33 && out.length > 3) {
+                TempObj = out.slice(3)
+                n = [0,0]
+                for (let i = 0; i != TempObj.length; i++) {
+                    switch (TempObj[i]) {
+                        case 51:
+                            n[1]--
+                            break
+                        case 52:
+                            n[0]++
+                            break
+                        case 53:
+                            n[1]++
+                            break
+                        case 54:
+                            n[0]--
+                            break
+                        default:
+                            break
+                    }
+                }
+                window.obj.get(guiCom[1])[3][4][1] = n
+                out = RusToDis('данные передачи диска '+window.obj.get(guiCom[1])[3][4][1]);
+            }
+        }
+
+        else if (window.obj.get(guiCom[1])[0][0] == "disk") {
+            if (out.length == 1) {
+                out = RusToDis('данные диска '+window.obj.get(guiCom[1])[3][4][0]);
+            }
+            else if (out[1] == 33 && out.length > 2) {
+                TempObj = out.slice(2)
+                window.obj.get(guiCom[1])[3][4][0] = TempObj
+                out = RusToDis('данные диска '+window.obj.get(guiCom[1])[3][4][0]);
+            }
+        }
+
+        else if (out[1] == 6 && window.obj.get(guiCom[1])[0][0] == "*compare") {
+            if (out.length == 2) {
+                out = RusToDis('второй блок '+window.obj.get(guiCom[1])[3][4][1]);
+            }
+            else if (out[2] == 33 && out.length > 3) {
+                TempObj = out.slice(3)
+                n = [0,0]
+                for (let i = 0; i != TempObj.length; i++) {
+                    switch (TempObj[i]) {
+                        case 51:
+                            n[1]--
+                            break
+                        case 52:
+                            n[0]++
+                            break
+                        case 53:
+                            n[1]++
+                            break
+                        case 54:
+                            n[0]--
+                            break
+                        default:
+                            break
+                    }
+                }
+                window.obj.get(guiCom[1])[3][4][1] = n
+                out = RusToDis('второй блок равен '+window.obj.get(guiCom[1])[3][4][1]);
+            }
+        }
+        else if (window.obj.get(guiCom[1])[0][0] == "*compare") {
+            if (out.length == 1) {
+                out = RusToDis('первый блок '+window.obj.get(guiCom[1])[3][4][0]);
+            }
+            else if (out[1] == 33 && out.length > 2) {
+                TempObj = out.slice(2)
+                n = [0,0]
+                for (let i = 0; i != TempObj.length; i++) {
+                    switch (TempObj[i]) {
+                        case 51:
+                            n[1]--
+                            break
+                        case 52:
+                            n[0]++
+                            break
+                        case 53:
+                            n[1]++
+                            break
+                        case 54:
+                            n[0]--
+                            break
+                        default:
+                            break
+                    }
+                }
+                window.obj.get(guiCom[1])[3][4][0] = n
+                out = RusToDis('первый блок равен '+window.obj.get(guiCom[1])[3][4][0]);
+            }
         }
     }
 }
