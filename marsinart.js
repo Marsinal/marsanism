@@ -718,7 +718,7 @@ class Slot {
                 break
             case "capacitor":
                 me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
-                //n = findEnergy(this.RealCoord,1)
+                n = findEnergy(this.RealCoord,0)
                 /*n = isNeedBlock(this.RealCoord,[1,0])
                 if (n == false) {n = [0,[0,0]]}
                 if (n[1][0] > 0 && me[1][1] > me[1][0]) {
@@ -1278,7 +1278,7 @@ class Slot {
                 n = isNeedBlock(this.RealCoord,[0,1])
                 if (n == false) {n = [0,[0,0]]}
                 if (n[1][0] > 0 && me[1][1] > me[1][0]) {
-                    me[3][2][0] = true
+                    me[3][1][0] = true
                     me[1][0]++
                     n[1][0]--
                 }
