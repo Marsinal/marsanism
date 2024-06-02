@@ -34,7 +34,7 @@ var filts = [1,3]
 var log = 0;
 save1 = [["air"]];
 
-var time = [true,0,60000]
+var time = [true,0,30000]
 
 class Display {
     constructor(display, scale, colour) {
