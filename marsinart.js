@@ -1260,7 +1260,14 @@ class Slot {
                 break
             case "teslacoil":
                 me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
-                findEnergy(this.RealCoord,0)
+                //findEnergy(this.RealCoord,0)
+                n = isNeedBlock(this.RealCoord,[0,1])
+                if (n == false) {n = [0,[0,0]]}
+                if (n[1][0] > 0 && me[1][1] > me[1][0]) {
+                    me[3][2] = true
+                    me[1][0]++
+                    n[1][0]--
+                }
                 n = isNeedBlock(this.RealCoord,[me[3][3][0],me[3][3][1]])
                 if (n == false) {n = [0,[0,0]]}
 
