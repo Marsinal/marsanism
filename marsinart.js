@@ -1111,16 +1111,17 @@ class Slot {
                 drop(this.RealCoord,window.sand,coord)
                 if (me[1][0] >= me[1][1]) {
                     updSlot(this.RealCoord)
-                    window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["glass",true],[0,0],[true,true,true,true],[0,[true,true,true,true],[false,false,false,false]]]);
+                    window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["glass",true],[0,0],[true,true,true,true],[0,[true,true,true,true],[false,false,false,false],[0,5]]]);
                 }
                 //doRedSprite(window.sand, coord, [window.scope,window.scope], power[0]);
                 break
             case "glass":
-                me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
-                if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
+                /*me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);*/
+                drop(this.RealCoord,window.glass,coord)
+                /*if ((upd || me[0][1]) && onScreen(this.RealCoord)) {
                     doSprite(window.glass, coord, [window.scope,window.scope]);
                     me[0][1] = false
-                }
+                }*/
                 break
             case "bricks":
                 me = window.obj.get(this.RealCoord[0]+','+this.RealCoord[1]);
