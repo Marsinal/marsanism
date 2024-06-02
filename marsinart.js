@@ -569,7 +569,7 @@ class Slot {
                     case 23:
                         if (kickIf(window.TempObj[0][0],"teslacoil")) {
                             updSlot(this.RealCoord)
-                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["teslacoil",true],[0,1],[true,true,true,true],[0,[true,true,true,true],[false,false,false,false],[0,0]]]);
+                            window.obj.set(this.RealCoord[0]+','+this.RealCoord[1], [["teslacoil",true],[0,1],[false,false,true,false],[0,[true,true,true,true],[false,false,false,false],[0,0]]]);
                         }
                         break
                     case 24:
