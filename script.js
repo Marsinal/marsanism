@@ -20,7 +20,7 @@ var tab = 0;
 
 Gui.size = [200,200]
 
-var fps = [140,0,[41]];
+var fps = [144,0,[41]];
 
 var scope = 2;
 var start = [15,5];
@@ -72,18 +72,36 @@ function step() {
             blocks[1]++
         }
         blocks[1] = 0;
+        upd = false
+        displayAtWork[1].fillStyle = "#2f2f2f";
+        displayAtWork[1].fillRect(0, 0, 150, displayAtWork[0].height);
+        doSprite(tabs[0],[150,0],[3,3]);
         if (guiCom[0]) {
             Gui.show();
         }
         if (20 > con[1]) {
             con[1]++
         }
-        displayAtWork[1].fillStyle = "#2f2f2f";
-        displayAtWork[1].fillRect(0, 0, 150, displayAtWork[0].height);
-        doSprite(tabs[0],[150,0],[3,3]);
+
+        if (time[2] > time[1]) {
+            time[1]++
+        }
+        else {
+            if (time[0]) {
+                time[0] = false
+                dis.colour = "#111111"
+                clearStyle = "#111111"
+            }
+            else {
+                time[0] = true
+                dis.colour = "#1a1a1a"
+                clearStyle = "#1a1a1a"
+            }
+            upd = true
+            time[1] = 0
+        }
         doRusText(fps[2], [10,10],13,[3,3])
         fps[1]++
-        upd = false
         TYPE();
         clearTimeout(step);
         step();
